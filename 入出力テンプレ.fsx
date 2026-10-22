@@ -1,3 +1,6 @@
+//// 参照
+//// https://github.com/biuntri/ComProTemplate/blob/main/%E5%85%A5%E5%87%BA%E5%8A%9B%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC.fsx
+//// https://github.com/biuntri/ComProTemplate/blob/main/%E6%95%B0%E5%80%A4%E8%A8%88%E7%AE%97%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC.fsx
 #if INTERACTIVE
 #r "nuget: ac-library-csharp"
 #endif
