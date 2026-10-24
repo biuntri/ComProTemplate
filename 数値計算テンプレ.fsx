@@ -392,7 +392,8 @@ let inline WidthFirstSearch neighbors start found =
     GraphTraversal start neighbors found push TryPop Collection
 
 // ダイクストラ法
-let inline ShortestPathFirstSearch neighbors start found =
+// 単独で動く
+let inline ShortestPathFirstSearch neighbors (start: ^p) found =
     let Collection = PriorityQueue<^p list, ^c>()
 
     let inline push (pos: ^p list) cost (collection: PriorityQueue<^p list, ^c>) =
@@ -405,7 +406,41 @@ let inline ShortestPathFirstSearch neighbors start found =
         else
             None
 
-    GraphTraversal start neighbors found push TryPop Collection
+    let zerocost = LanguagePrimitives.GenericZero
+
+    // 初期値設定
+    let exprored: Dictionary<^p,^c * ^p list> = Dictionary()
+    push [start] zerocost Collection
+
+    // 探索実行
+    // exprored: 探索済み
+    let rec loop (exprored: Dictionary<^p, ^c * ^p list>) (note: PriorityQueue<^p list, ^c>) : (^p list * ^c) option =
+        let nextoption = TryPop note
+        match nextoption with
+        | None -> None
+        | Some (next, cost) ->
+            if found next.Head then
+                Some (next, cost)
+            else
+                let neighbor = neighbors next.Head
+                if not (exprored.ContainsKey next.Head) then
+                    exprored.Add (next.Head, (cost, next))
+                    for n in neighbor do
+                        let p, c = n
+                        let route = p :: next
+                        push route (c + cost) note
+                    loop exprored  note
+                elif exprored.[next.Head] |> fst > cost then
+                    exprored.[next.Head] <- cost, next
+                    for n in neighbor do
+                        let p, c = n
+                        let route = p :: next
+                        push route (c + cost) note
+                    loop exprored  note
+                else
+                    loop exprored  note
+    
+    loop exprored Collection
 
 
 
